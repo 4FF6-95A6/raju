@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<meta name="theme-color" content="#00695C" />
+<title>MedStock</title>
+<style>
+/* =========================================================
+   MedStock - all CSS in this <style> block.
+   To recolor the brand, change --primary / --primary-dark.
+   ========================================================= */
+:root {
+  --primary: #00897B;
+  --primary-dark: #00695C;
+  --primary-light: #B2DFDB;
+  --accent: #FF6F00;
+  --bg: #F5F7FA;
+  --card: #FFFFFF;
+  --outline: #E0E4EA;
+  --text: #1A1F2C;
+  --text-soft: #5A6473;
+  --success: #2E7D32;
+  --success-soft: #E8F5E9;
+  --warning: #F59E0B;
+  --warning-soft: #FFF7E6;
+  --danger: #D32F2F;
+  --danger-soft: #FFEBEE;
+  --info: #1976D2;
+  --info-soft: #E3F2FD;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+  --radius: 16px;
+  --radius-sm: 12px;
+  --topbar-h: 56px;
+  --bottomnav-h: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: contain;
+}
+input, button, select, textarea { font-family: inherit; font-size: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: transparent; padding: 0; }
+
+/* App shell */
+#app { min-height: 100%; padding-bottom: calc(var(--bottomnav-h) + var(--safe-bottom)); }
+#app.no-bottom-nav { padding-bottom: 0; }
+
+/* Top bar */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--topbar-h);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  background: var(--card);
+  border-bottom: 1px solid var(--outline);
+}
+.topbar.gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: #fff;
+  border-bottom: none;
+}
+.topbar .icon-btn { color: inherit; }
+.topbar h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: left;
+  padding-left: 8px;
+}
+.topbar.gradient h1 { color: #fff; }
+.icon-btn {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  color: var(--text);
+  background: transparent;
+}
+.icon-btn:active { background: rgba(0,0,0,0.06); }
+.topbar.gradient .icon-btn:active { background: rgba(255,255,255,0.15); }
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed;
+  left: 0; right: 0;
+  bottom: 0;
+  height: calc(var(--bottomnav-h) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background: var(--card);
+  border-top: 1px solid var(--outline);
+  display: flex;
+  align-items: stretch;
+  z-index: 20;
+}
+.bottom-nav button {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2px;
+  color: var(--text-soft);
+  font-size: 11px;
+  font-weight: 500;
+}
+.bottom-nav button .ic { font-size: 22px; }
+.bottom-nav button.active { color: var(--primary); }
+.bottom-nav .fab {
+  flex: 0 0 64px;
+  position: relative;
+  margin-top: -22px;
+}
+.bottom-nav .fab span.fab-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  box-shadow: 0 6px 14px rgba(0,137,123,0.4);
+  margin: 0 auto;
+}
+
+/* Screens */
+.screen { display: none; padding: 12px 14px 24px; }
+.screen.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px;
+  box-shadow: var(--shadow);
+  margin-bottom: 10px;
+}
+.card.clickable:active { transform: scale(0.99); }
+.row { display: flex; align-items: center; gap: 10px; }
+.row .grow { flex: 1; min-width: 0; }
+.col { display: flex; flex-direction: column; }
+.spacer { flex: 1; }
+.section-title {
+  margin: 14px 4px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Inputs */
+.field { display: block; margin-bottom: 10px; }
+.field label { display: block; font-size: 12px; color: var(--text-soft); margin-bottom: 4px; padding-left: 4px; }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--outline);
+  background: var(--card);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,137,123,0.12);
+}
+.field textarea { min-height: 80px; resize: vertical; }
+.field-row { display: flex; gap: 8px; }
+.field-row > * { flex: 1; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 15px;
+  text-align: center;
+  user-select: none;
+  transition: transform 0.05s, opacity 0.1s;
+}
+.btn:active:not(:disabled) { transform: scale(0.98); }
+.btn:disabled { opacity: 0.5; pointer-events: none; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:active { background: var(--primary-dark); }
+.btn-outline { background: var(--card); color: var(--text); border: 1px solid var(--outline); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+
+/* Stat cards */
+.stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat-card { background: var(--card); border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.stat-card .stat-head { display: flex; align-items: center; gap: 8px; }
+.stat-card .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.stat-card .stat-label { font-size: 12px; color: var(--text-soft); font-weight: 500; }
+.stat-card .stat-value { margin-top: 8px; font-size: 22px; font-weight: 700; }
+
+/* Status chip */
+.chip { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.3px; }
+.chip-success { background: var(--success-soft); color: var(--success); }
+.chip-warning { background: var(--warning-soft); color: var(--warning); }
+.chip-danger { background: var(--danger-soft); color: var(--danger); }
+.chip-info { background: var(--info-soft); color: var(--info); }
+.chip-primary { background: var(--primary-light); color: var(--primary-dark); }
+
+/* List items */
+.list-item {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+}
+.list-item:active { transform: scale(0.99); }
+.avatar {
+  width: 42px; height: 42px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+.avatar.primary { background: var(--primary-light); color: var(--primary-dark); }
+.avatar.info { background: var(--info-soft); color: var(--info); }
+.avatar.warning { background: var(--warning-soft); color: var(--warning); }
+.avatar.danger { background: var(--danger-soft); color: var(--danger); }
+.avatar.success { background: var(--success-soft); color: var(--success); }
+.list-item .title { font-weight: 600; font-size: 15px; }
+.list-item .sub { font-size: 12px; color: var(--text-soft); margin-top: 2px; }
+
+/* Empty state */
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-soft);
+}
+.empty .ic { font-size: 48px; margin-bottom: 10px; }
+.empty h3 { margin: 6px 0; color: var(--text); font-size: 17px; }
+.empty p { margin: 0; font-size: 13px; }
+
+/* Search */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--card);
+  border: 1px solid var(--outline);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  height: 44px;
+  margin-bottom: 10px;
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0 8px;
+  font-size: 14px;
+}
+.search-bar .ic { color: var(--text-soft); }
+
+/* FAB */
+.fab-bottom {
+  position: fixed;
+  right: 18px;
+  bottom: calc(var(--bottomnav-h) + var(--safe-bottom) + 18px);
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 14px rgba(0,137,123,0.45);
+  font-size: 28px;
+  z-index: 25;
+}
+
+/* Header banner (Home) */
+.header-banner {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  margin: -12px -14px 14px;
+  padding: 22px 18px 26px;
+  border-radius: 0 0 24px 24px;
+}
+.header-banner .greet { font-size: 13px; opacity: 0.85; }
+.header-banner .store { font-size: 22px; font-weight: 700; margin-top: 2px; }
+.header-banner .meta { font-size: 12px; margin-top: 2px; opacity: 0.8; }
+
+/* Quick actions */
+.quick-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.quick {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 14px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.quick .ic-circle {
+  width: 44px; height: 44px;
+  margin: 0 auto 6px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.quick .qlabel { font-size: 12px; font-weight: 600; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+.modal {
+  width: 100%;
+  max-width: 420px;
+  max-height: 92vh;
+  overflow-y: auto;
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  padding: 18px;
+}
+.modal h2 { margin: 0 0 10px; font-size: 18px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 14px; }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: calc(var(--bottomnav-h) + var(--safe-bottom) + 24px);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(26,31,44,0.95);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 24px;
+  font-size: 13px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s, transform 0.18s;
+  z-index: 100;
+  max-width: 80%;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Cart line */
+.cart-line {
+  background: var(--info-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.cart-line .name { font-weight: 600; font-size: 14px; }
+.cart-line .meta { font-size: 12px; color: var(--text-soft); }
+.cart-line .price { font-weight: 600; font-size: 13px; color: var(--text); }
+
+/* Totals card */
+.totals-card { background: var(--primary-light); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; }
+.total-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; }
+.total-row.bold { font-weight: 700; font-size: 16px; padding-top: 8px; border-top: 1px dashed rgba(0,0,0,0.12); margin-top: 4px; }
+
+/* Tag (small color label) */
+.tag { display: inline-block; padding: 2px 8px; border-radius: 8px; font-size: 11px; font-weight: 600; }
+
+/* Invoice print view */
+.invoice-paper {
+  background: #fff;
+  color: #000;
+  padding: 24px 18px;
+  border-radius: 16px;
+  font-family: -apple-system, sans-serif;
+  box-shadow: var(--shadow);
+}
+.invoice-paper h2 { margin: 0; font-size: 22px; }
+.invoice-paper .center { text-align: center; }
+.invoice-paper table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12px; }
+.invoice-paper th { text-align: left; padding: 6px 4px; border-bottom: 1.5px solid #333; }
+.invoice-paper td { padding: 6px 4px; border-bottom: 1px dashed #ccc; vertical-align: top; }
+.invoice-paper .right { text-align: right; }
+.invoice-paper .totals { margin-top: 10px; }
+.invoice-paper .totals .row2 { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
+.invoice-paper .totals .row2.bold { font-weight: 700; font-size: 14px; border-top: 1.5px solid #333; padding-top: 6px; margin-top: 4px; }
+
+/* Print rules: when printing, only invoice paper is visible */
+@media print {
+  body * { visibility: hidden; }
+  #print-area, #print-area * { visibility: visible; }
+  #print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; }
+  .topbar, .bottom-nav, .fab-bottom, .toast, .modal-overlay { display: none !important; }
+  .invoice-paper { box-shadow: none; border-radius: 0; padding: 0; }
+}
+
+/* Misc */
+.divider { height: 1px; background: var(--outline); margin: 8px 0; }
+.muted { color: var(--text-soft); }
+.text-danger { color: var(--danger); }
+.text-success { color: var(--success); }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.flex { display: flex; }
+.gap-8 { gap: 8px; }
+.gap-12 { gap: 12px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.bold { font-weight: 700; }
+.semibold { font-weight: 600; }
+.fs-12 { font-size: 12px; }
+.fs-14 { font-size: 14px; }
+.fs-16 { font-size: 16px; }
+.fs-18 { font-size: 18px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Top bar (rendered per screen) -->
+  <header id="topbar" class="topbar"><h1>MedStock</h1></header>
+
+  <!-- Print area for invoice (hidden visually until print) -->
+  <div id="print-area" style="display:none"></div>
+
+  <!-- Screens -->
+  <main id="main">
+
+    <!-- HOME -->
+    <section id="screen-home" class="screen active"></section>
+
+    <!-- STOCK -->
+    <section id="screen-stock" class="screen"></section>
+    <section id="screen-add-stock" class="screen"></section>
+
+    <!-- SALE -->
+    <section id="screen-sale" class="screen"></section>
+    <section id="screen-invoice" class="screen"></section>
+
+    <!-- MORE -->
+    <section id="screen-more" class="screen"></section>
+    <section id="screen-customers" class="screen"></section>
+    <section id="screen-add-customer" class="screen"></section>
+    <section id="screen-pending" class="screen"></section>
+    <section id="screen-expiry" class="screen"></section>
+    <section id="screen-profile" class="screen"></section>
+
+  </main>
+
+  <!-- Bottom nav -->
+  <nav id="bottomnav" class="bottom-nav">
+    <button data-tab="home" class="active"><span class="ic">🏠</span><span>Home</span></button>
+    <button data-tab="stock"><span class="ic">📦</span><span>Stock</span></button>
+    <button data-tab="sale" class="fab"><span class="fab-circle">＋</span><span style="margin-top:4px">Sale</span></button>
+    <button data-tab="more"><span class="ic">⋯</span><span>More</span></button>
+  </nav>
+</div>
+
+<!-- Modal & toast container -->
+<div id="modal-root"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+/* =========================================================
+   MedStock - All app logic.
+   Architecture:
+   1. Constants
+   2. Storage (localStorage-backed db)
+   3. Helpers (uid, format, dates)
+   4. Navigation / topbar
+   5. Toast / modal helpers
+   6. GST calculation
+   7. Render functions for each screen
+   8. Global event delegation
+   9. Init
+   ========================================================= */
+
+const MedStock = (() => {
+  'use strict';
+
+  /* ---------- 1. Constants ---------- */
+  const GST_RATES = [0, 5, 12, 18, 28];
+  const UNITS = ['BOX', 'PIECES', 'BOTTLE', 'STRIP'];
+  const PAYMENT_MODES = ['CASH', 'UPI', 'CARD', 'CREDIT'];
+  const STORAGE_KEY = 'medstock_db_v1';
+
+  /* ---------- 2. Storage ---------- */
+  const defaultDb = () => ({
+    medicines: [],
+    customers: [],
+    customerPrices: [],   // { id, customerId, medicineId, specialPrice }
+    sales: [],
+    saleItems: [],
+    payments: [],
+    profile: {
+      ownerName: '',
+      storeName: '',
+      gstNo: '',
+      drugLicenseNo: '',
+      address: '',
+      phone: '',
+      email: '',
+      state: '',
+      stateCode: '',
+      invoicePrefix: 'INV',
+      lastInvoiceSeq: 0
+    }
+  });
+
+  let db = defaultDb();
+
+  function loadDb() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        db = Object.assign(defaultDb(), JSON.parse(raw));
+      }
+    } catch (e) {
+      console.warn('Failed to load db', e);
+      db = defaultDb();
+    }
+  }
+
+  function saveDb() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  }
+
+  /* ---------- 3. Helpers ---------- */
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+  function rs(n) {
+    const v = Number(n) || 0;
+    return '₹' + v.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function num2(n) { return (Math.round((Number(n) || 0) * 100) / 100); }
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function fmtDate(ts) {
+    if (!ts) return '—';
+    const d = new Date(Number(ts));
+    if (isNaN(d.getTime())) return '—';
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  function fmtDateTime(ts) {
+    if (!ts) return '—';
+    const d = new Date(Number(ts));
+    return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+  function dateInputValue(ts) {
+    if (!ts) return '';
+    const d = new Date(Number(ts));
+    if (isNaN(d.getTime())) return '';
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return d.getFullYear() + '-' + m + '-' + day;
+  }
+  function parseDateInput(s) {
+    if (!s) return 0;
+    const t = new Date(s + 'T00:00:00').getTime();
+    return isNaN(t) ? 0 : t;
+  }
+  function startOfDay(ts) { const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime(); }
+  function endOfDay(ts) { const d = new Date(ts); d.setHours(23,59,59,999); return d.getTime(); }
+  function daysFromNow(d) { return Date.now() + d * 86400000; }
+  function daysBetween(a, b) { return Math.floor((b - a) / 86400000); }
+
+  function nextInvoiceNo() {
+    db.profile.lastInvoiceSeq = (db.profile.lastInvoiceSeq || 0) + 1;
+    const pre = (db.profile.invoicePrefix || 'INV').toUpperCase();
+    return pre + '-' + String(db.profile.lastInvoiceSeq).padStart(5, '0');
+  }
+
+  /* ---------- 4. Navigation / topbar ---------- */
+  const TAB_OF_SCREEN = {
+    home: 'home',
+    stock: 'stock', 'add-stock': 'stock',
+    sale: 'sale', invoice: 'sale',
+    more: 'more', customers: 'more', 'add-customer': 'more',
+    pending: 'more', expiry: 'more', profile: 'more'
+  };
+  const screenStack = ['home'];
+
+  function show(name, opts) {
+    opts = opts || {};
+    document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById('screen-' + name);
+    if (!el) { console.warn('No screen ' + name); return; }
+    el.classList.add('active');
+    if (!opts.replace) {
+      // Don't push duplicates back-to-back
+      if (screenStack[screenStack.length - 1] !== name) screenStack.push(name);
+    } else {
+      screenStack[screenStack.length - 1] = name;
+    }
+    // Render content
+    const renderer = renderers[name];
+    if (renderer) renderer(opts.arg);
+    // Highlight bottom nav
+    const tab = TAB_OF_SCREEN[name] || 'home';
+    document.querySelectorAll('#bottomnav button[data-tab]').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }
+
+  function back() {
+    if (screenStack.length <= 1) return false;
+    screenStack.pop();
+    const prev = screenStack[screenStack.length - 1];
+    show(prev, { replace: true });
+    return true;
+  }
+
+  function setTopBar({ title, gradient, left, right }) {
+    const tb = document.getElementById('topbar');
+    tb.className = 'topbar' + (gradient ? ' gradient' : '');
+    tb.innerHTML = '';
+    if (left) {
+      const b = document.createElement('button');
+      b.className = 'icon-btn';
+      b.innerHTML = left.icon || '←';
+      b.onclick = left.onclick;
+      tb.appendChild(b);
+    }
+    const h = document.createElement('h1');
+    h.textContent = title || '';
+    tb.appendChild(h);
+    if (right) {
+      const r = document.createElement('button');
+      r.className = 'icon-btn';
+      r.innerHTML = right.icon;
+      r.onclick = right.onclick;
+      tb.appendChild(r);
+    }
+  }
+
+  /* ---------- 5. Toast / modal ---------- */
+  let toastTimer = null;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function modal(htmlContent, options) {
+    options = options || {};
+    const root = document.getElementById('modal-root');
+    root.innerHTML = '';
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    const m = document.createElement('div');
+    m.className = 'modal';
+    m.innerHTML = htmlContent;
+    overlay.appendChild(m);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay && !options.persistent) closeModal();
+    });
+    root.appendChild(overlay);
+    if (options.onMount) options.onMount(m);
+    return m;
+  }
+
+  function closeModal() {
+    document.getElementById('modal-root').innerHTML = '';
+  }
+
+  function confirmDialog(msg, onYes, yesLabel) {
+    modal(`
+      <h2>Are you sure?</h2>
+      <p class="muted">${escapeHtml(msg)}</p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" data-act="cancel">Cancel</button>
+        <button class="btn btn-danger" data-act="ok">${escapeHtml(yesLabel || 'Yes, delete')}</button>
+      </div>
+    `, {
+      onMount: (m) => {
+        m.querySelector('[data-act="cancel"]').onclick = closeModal;
+        m.querySelector('[data-act="ok"]').onclick = () => { closeModal(); onYes && onYes(); };
+      }
+    });
+  }
+
+  /* ---------- 6. GST calc ---------- */
+  function gstCalc(unitPrice, qty, gstPct, isInterState) {
+    const taxable = num2(unitPrice * qty);
+    const gst = num2(taxable * gstPct / 100);
+    const cgst = isInterState ? 0 : num2(gst / 2);
+    const sgst = isInterState ? 0 : num2(gst - cgst);
+    const igst = isInterState ? gst : 0;
+    return { taxable, gst, cgst, sgst, igst, total: num2(taxable + gst) };
+  }
+
+  /* ---------- 7. Renderers ---------- */
+  const renderers = {};
+
+  /* ===== HOME ===== */
+  renderers.home = function () {
+    setTopBar({ title: '', gradient: false, left: null, right: null });
+    document.getElementById('topbar').style.display = 'none'; // home uses banner instead
+
+    const today = Date.now();
+    const startToday = startOfDay(today);
+    const endToday = endOfDay(today);
+    const todaysSales = db.sales.filter(s => s.date >= startToday && s.date <= endToday);
+    const todaysTotal = todaysSales.reduce((a, s) => a + s.total, 0);
+    const todaysCount = todaysSales.length;
+    const totalPending = db.sales.reduce((a, s) => a + (s.pendingAmount || 0), 0);
+    const expiringSoon = db.medicines.filter(m => m.expiryDate > 0 && m.expiryDate <= daysFromNow(90));
+    const lowStock = db.medicines.filter(m => m.quantity <= (m.lowStockThreshold || 10));
+    const recentSales = db.sales.slice().sort((a, b) => b.date - a.date).slice(0, 5);
+
+    const ownerName = db.profile.ownerName || 'there';
+    const storeName = db.profile.storeName || 'MedStock Pharmacy';
+
+    const el = document.getElementById('screen-home');
+    el.innerHTML = `
+      <div class="header-banner">
+        <div class="greet">Hello, ${escapeHtml(ownerName)}</div>
+        <div class="store">${escapeHtml(storeName)}</div>
+        <div class="meta">${fmtDate(today)}</div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-head">
+            <div class="stat-icon" style="background:var(--success-soft);color:var(--success)">💰</div>
+            <div class="stat-label">Today's Sales</div>
+          </div>
+          <div class="stat-value">${rs(todaysTotal)}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-head">
+            <div class="stat-icon" style="background:var(--info-soft);color:var(--info)">🧾</div>
+            <div class="stat-label">Bills Today</div>
+          </div>
+          <div class="stat-value">${todaysCount}</div>
+        </div>
+        <div class="stat-card clickable" data-go="pending">
+          <div class="stat-head">
+            <div class="stat-icon" style="background:var(--danger-soft);color:var(--danger)">⏳</div>
+            <div class="stat-label">Pending Payments</div>
+          </div>
+          <div class="stat-value">${rs(totalPending)}</div>
+        </div>
+        <div class="stat-card clickable" data-go="expiry">
+          <div class="stat-head">
+            <div class="stat-icon" style="background:var(--warning-soft);color:var(--warning)">⏰</div>
+            <div class="stat-label">Expiring Soon</div>
+          </div>
+          <div class="stat-value">${expiringSoon.length}</div>
+        </div>
+      </div>
+
+      <div class="section-title">Quick Actions</div>
+      <div class="quick-grid">
+        <div class="quick clickable" data-go="sale">
+          <div class="ic-circle" style="background:var(--primary-light);color:var(--primary-dark)">＋</div>
+          <div class="qlabel">New Sale</div>
+        </div>
+        <div class="quick clickable" data-go="add-stock">
+          <div class="ic-circle" style="background:var(--info-soft);color:var(--info)">📦</div>
+          <div class="qlabel">Add Stock</div>
+        </div>
+        <div class="quick clickable" data-go="add-customer">
+          <div class="ic-circle" style="background:var(--warning-soft);color:var(--warning)">👤</div>
+          <div class="qlabel">Customer</div>
+        </div>
+      </div>
+
+      ${lowStock.length ? `
+        <div class="section-title">Low Stock</div>
+        ${lowStock.slice(0, 3).map(m => `
+          <div class="list-item">
+            <div class="avatar warning">⚠</div>
+            <div class="grow">
+              <div class="title">${escapeHtml(m.name)}</div>
+              <div class="sub">Only ${m.quantity} left</div>
+            </div>
+            <span class="chip chip-warning">LOW</span>
+          </div>
+        `).join('')}
+      ` : ''}
+
+      ${recentSales.length ? `
+        <div class="section-title">Recent Sales</div>
+        ${recentSales.map(s => `
+          <div class="list-item clickable" data-go="invoice" data-arg="${s.id}">
+            <div class="avatar success">📄</div>
+            <div class="grow">
+              <div class="title">${escapeHtml(s.invoiceNo)}</div>
+              <div class="sub">${escapeHtml(s.customerName)} • ${fmtDate(s.date)}</div>
+            </div>
+            <div class="semibold">${rs(s.total)}</div>
+          </div>
+        `).join('')}
+      ` : ''}
+    `;
+  };
+
+  /* ===== STOCK ===== */
+  let stockSearch = '';
+  renderers.stock = function () {
+    document.getElementById('topbar').style.display = '';
+    setTopBar({ title: 'Stock Inventory', gradient: false, left: null, right: null });
+    const list = db.medicines
+      .filter(m => !stockSearch || m.name.toLowerCase().includes(stockSearch) || (m.batchNo || '').toLowerCase().includes(stockSearch))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const el = document.getElementById('screen-stock');
+    el.innerHTML = `
+      <div class="search-bar">
+        <span class="ic">🔍</span>
+        <input id="stock-search" placeholder="Search medicine or batch" value="${escapeHtml(stockSearch)}" />
+      </div>
+      ${list.length === 0 ? `
+        <div class="empty">
+          <div class="ic">📦</div>
+          <h3>No stock yet</h3>
+          <p>Tap the + button to add your first medicine</p>
+        </div>
+      ` : list.map(m => stockListItem(m)).join('')}
+      <button class="fab-bottom" data-go="add-stock" aria-label="Add">＋</button>
+    `;
+
+    el.querySelector('#stock-search').addEventListener('input', (e) => {
+      stockSearch = e.target.value.trim().toLowerCase();
+      renderers.stock();
+    });
+  };
+
+  function stockListItem(m) {
+    const days = m.expiryDate > 0 ? daysBetween(Date.now(), m.expiryDate) : null;
+    let chip = '';
+    if (days !== null) {
+      if (days < 0) chip = `<span class="chip chip-danger">EXPIRED</span>`;
+      else if (days <= 30) chip = `<span class="chip chip-danger">≤30D</span>`;
+      else if (days <= 90) chip = `<span class="chip chip-warning">≤90D</span>`;
+      else chip = `<span class="chip chip-success">OK</span>`;
+    }
+    const lowFlag = m.quantity <= (m.lowStockThreshold || 10) ? `<span class="chip chip-warning" style="margin-left:4px">LOW</span>` : '';
+    return `
+      <div class="list-item clickable" data-go="add-stock" data-arg="${m.id}">
+        <div class="avatar info">💊</div>
+        <div class="grow">
+          <div class="title">${escapeHtml(m.name)}</div>
+          <div class="sub">${m.batchNo ? 'Batch ' + escapeHtml(m.batchNo) + ' • ' : ''}Exp ${fmtDate(m.expiryDate)}</div>
+          <div class="sub">${m.unitType} • Qty ${m.quantity} • ${rs(m.sellingPrice)} • GST ${m.gstPercent}%</div>
+        </div>
+        <div class="text-right">${chip}${lowFlag}</div>
+      </div>
+    `;
+  }
+
+  /* ===== ADD/EDIT STOCK ===== */
+  renderers['add-stock'] = function (id) {
+    document.getElementById('topbar').style.display = '';
+    const editing = id ? db.medicines.find(m => m.id === id) : null;
+    const m = editing ? Object.assign({}, editing) : {
+      id: '', name: '', batchNo: '', manufacturer: '', unitType: 'PIECES',
+      quantity: 0, piecesPerUnit: 1, purchasePrice: 0, sellingPrice: 0,
+      gstPercent: 12, hsnCode: '', expiryDate: 0, lowStockThreshold: 10
+    };
+
+    setTopBar({
+      title: editing ? 'Edit Stock' : 'Add Stock',
+      gradient: false,
+      left: { icon: '←', onclick: () => back() },
+      right: editing ? {
+        icon: '🗑',
+        onclick: () => confirmDialog('Delete "' + m.name + '"?', () => {
+          db.medicines = db.medicines.filter(x => x.id !== m.id);
+          db.customerPrices = db.customerPrices.filter(x => x.medicineId !== m.id);
+          saveDb(); toast('Deleted'); back();
+        })
+      } : null
+    });
+
+    const el = document.getElementById('screen-add-stock');
+    el.innerHTML = `
+      <div class="card">
+        <div class="field">
+          <label>Medicine Name *</label>
+          <input id="f-name" value="${escapeHtml(m.name)}" placeholder="e.g. Paracetamol 500mg" />
+        </div>
+        <div class="field">
+          <label>Batch Number</label>
+          <input id="f-batch" value="${escapeHtml(m.batchNo)}" />
+        </div>
+        <div class="field">
+          <label>Manufacturer</label>
+          <input id="f-mfr" value="${escapeHtml(m.manufacturer)}" />
+        </div>
+        <div class="field">
+          <label>Unit Type</label>
+          <select id="f-unit">
+            ${UNITS.map(u => `<option value="${u}" ${u === m.unitType ? 'selected' : ''}>${u}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Quantity</label>
+            <input id="f-qty" type="number" inputmode="numeric" value="${m.quantity}" />
+          </div>
+          <div class="field">
+            <label id="lab-pcs">Pcs / Unit</label>
+            <input id="f-pcs" type="number" inputmode="numeric" value="${m.piecesPerUnit}" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Purchase Price</label>
+            <input id="f-pp" type="number" inputmode="decimal" value="${m.purchasePrice}" />
+          </div>
+          <div class="field">
+            <label>Selling (MRP)</label>
+            <input id="f-sp" type="number" inputmode="decimal" value="${m.sellingPrice}" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>GST %</label>
+            <select id="f-gst">
+              ${GST_RATES.map(r => `<option value="${r}" ${r === m.gstPercent ? 'selected' : ''}>${r}%</option>`).join('')}
+            </select>
+          </div>
+          <div class="field">
+            <label>HSN Code</label>
+            <input id="f-hsn" value="${escapeHtml(m.hsnCode)}" />
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Expiry Date</label>
+            <input id="f-exp" type="date" value="${dateInputValue(m.expiryDate)}" />
+          </div>
+          <div class="field">
+            <label>Low Alert Qty</label>
+            <input id="f-low" type="number" inputmode="numeric" value="${m.lowStockThreshold}" />
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="btn-save-stock">${editing ? 'Update Stock' : 'Save Stock'}</button>
+    `;
+
+    const updateLabel = () => {
+      const u = el.querySelector('#f-unit').value;
+      el.querySelector('#lab-pcs').textContent = u === 'BOX' ? 'Pcs / Box' : 'Pcs / Unit';
+    };
+    el.querySelector('#f-unit').addEventListener('change', updateLabel);
+    updateLabel();
+
+    el.querySelector('#btn-save-stock').onclick = () => {
+      const name = el.querySelector('#f-name').value.trim();
+      if (!name) { toast('Enter medicine name'); return; }
+      const obj = {
+        id: m.id || uid(),
+        name,
+        batchNo: el.querySelector('#f-batch').value.trim(),
+        manufacturer: el.querySelector('#f-mfr').value.trim(),
+        unitType: el.querySelector('#f-unit').value,
+        quantity: parseInt(el.querySelector('#f-qty').value) || 0,
+        piecesPerUnit: parseInt(el.querySelector('#f-pcs').value) || 1,
+        purchasePrice: parseFloat(el.querySelector('#f-pp').value) || 0,
+        sellingPrice: parseFloat(el.querySelector('#f-sp').value) || 0,
+        gstPercent: parseFloat(el.querySelector('#f-gst').value) || 0,
+        hsnCode: el.querySelector('#f-hsn').value.trim(),
+        expiryDate: parseDateInput(el.querySelector('#f-exp').value),
+        lowStockThreshold: parseInt(el.querySelector('#f-low').value) || 10,
+        addedDate: editing ? m.addedDate : Date.now()
+      };
+      const idx = db.medicines.findIndex(x => x.id === obj.id);
+      if (idx >= 0) db.medicines[idx] = obj; else db.medicines.push(obj);
+      saveDb();
+      toast(editing ? 'Updated' : 'Added');
+      back();
+    };
+  };
+
+  /* ===== CUSTOMERS ===== */
+  let customerSearch = '';
+  renderers.customers = function () {
+    setTopBar({
+      title: 'Customers',
+      left: { icon: '←', onclick: () => back() }
+    });
+    const list = db.customers
+      .filter(c => !customerSearch ||
+        c.name.toLowerCase().includes(customerSearch) ||
+        (c.phone || '').includes(customerSearch))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const el = document.getElementById('screen-customers');
+    el.innerHTML = `
+      <div class="search-bar">
+        <span class="ic">🔍</span>
+        <input id="cust-search" placeholder="Search customers" value="${escapeHtml(customerSearch)}" />
+      </div>
+      ${list.length === 0 ? `
+        <div class="empty">
+          <div class="ic">👥</div>
+          <h3>No customers yet</h3>
+          <p>Add your regulars to track sales &amp; special prices</p>
+        </div>
+      ` : list.map(c => `
+        <div class="list-item clickable" data-go="add-customer" data-arg="${c.id}">
+          <div class="avatar primary">${escapeHtml((c.name[0] || '?').toUpperCase())}</div>
+          <div class="grow">
+            <div class="title">${escapeHtml(c.name)}</div>
+            <div class="sub">${[c.phone, c.gstNo ? 'GST ' + c.gstNo : ''].filter(Boolean).map(escapeHtml).join(' • ')}</div>
+          </div>
+        </div>
+      `).join('')}
+      <button class="fab-bottom" data-go="add-customer" aria-label="Add">＋</button>
+    `;
+    el.querySelector('#cust-search').addEventListener('input', (e) => {
+      customerSearch = e.target.value.trim().toLowerCase();
+      renderers.customers();
+    });
+  };
+
+  /* ===== ADD/EDIT CUSTOMER ===== */
+  renderers['add-customer'] = function (id) {
+    const editing = id ? db.customers.find(c => c.id === id) : null;
+    const c = editing ? Object.assign({}, editing) : {
+      id: '', name: '', phone: '', address: '', gstNo: '', notes: ''
+    };
+    setTopBar({
+      title: editing ? 'Edit Customer' : 'Add Customer',
+      left: { icon: '←', onclick: () => back() },
+      right: editing ? {
+        icon: '🗑',
+        onclick: () => confirmDialog('Delete "' + c.name + '" and their special prices?', () => {
+          db.customers = db.customers.filter(x => x.id !== c.id);
+          db.customerPrices = db.customerPrices.filter(x => x.customerId !== c.id);
+          saveDb(); toast('Deleted'); back();
+        })
+      } : null
+    });
+
+    const prices = editing ? db.customerPrices.filter(p => p.customerId === c.id) : [];
+
+    const el = document.getElementById('screen-add-customer');
+    el.innerHTML = `
+      <div class="card">
+        <div class="field"><label>Customer Name *</label><input id="cf-name" value="${escapeHtml(c.name)}" /></div>
+        <div class="field"><label>Phone</label><input id="cf-phone" type="tel" inputmode="numeric" value="${escapeHtml(c.phone)}" /></div>
+        <div class="field"><label>Address</label><textarea id="cf-addr">${escapeHtml(c.address)}</textarea></div>
+        <div class="field"><label>GST Number (optional)</label><input id="cf-gst" value="${escapeHtml(c.gstNo)}" /></div>
+        <div class="field"><label>Notes</label><textarea id="cf-notes">${escapeHtml(c.notes)}</textarea></div>
+      </div>
+      <button class="btn btn-primary btn-block" id="cf-save">${editing ? 'Update Customer' : 'Save Customer'}</button>
+
+      ${editing ? `
+        <div class="section-title">Special Prices</div>
+        <div class="card">
+          ${prices.length === 0 ? `<div class="muted fs-14">No special prices set. They'll get the default MRP.</div>` : ''}
+          ${prices.map(p => {
+            const med = db.medicines.find(m => m.id === p.medicineId);
+            return `
+              <div class="row" style="margin-bottom:8px">
+                <div class="grow">
+                  <div class="semibold">${escapeHtml(med ? med.name : 'Deleted medicine')}</div>
+                  <div class="sub">Default ${med ? rs(med.sellingPrice) : '—'}</div>
+                </div>
+                <div class="semibold text-success">${rs(p.specialPrice)}</div>
+                <button class="btn btn-outline btn-sm" data-remove-price="${p.id}">Remove</button>
+              </div>`;
+          }).join('')}
+          <button class="btn btn-outline btn-sm" id="add-special-price" style="margin-top:6px">＋ Add Special Price</button>
+        </div>
+      ` : ''}
+    `;
+
+    el.querySelector('#cf-save').onclick = () => {
+      const name = el.querySelector('#cf-name').value.trim();
+      if (!name) { toast('Enter customer name'); return; }
+      const obj = {
+        id: c.id || uid(),
+        name,
+        phone: el.querySelector('#cf-phone').value.trim(),
+        address: el.querySelector('#cf-addr').value.trim(),
+        gstNo: el.querySelector('#cf-gst').value.trim().toUpperCase(),
+        notes: el.querySelector('#cf-notes').value.trim(),
+        createdAt: editing ? c.createdAt : Date.now()
+      };
+      const idx = db.customers.findIndex(x => x.id === obj.id);
+      if (idx >= 0) db.customers[idx] = obj; else db.customers.push(obj);
+      saveDb();
+      toast(editing ? 'Updated' : 'Added');
+      back();
+    };
+
+    if (editing) {
+      el.querySelectorAll('[data-remove-price]').forEach(b => {
+        b.onclick = () => {
+          const pid = b.dataset.removePrice;
+          db.customerPrices = db.customerPrices.filter(p => p.id !== pid);
+          saveDb();
+          renderers['add-customer'](id);
+        };
+      });
+      el.querySelector('#add-special-price').onclick = () => openSpecialPriceDialog(c.id);
+    }
+  };
+
+  function openSpecialPriceDialog(customerId) {
+    if (db.medicines.length === 0) { toast('Add medicines first'); return; }
+    modal(`
+      <h2>Add Special Price</h2>
+      <div class="field">
+        <label>Medicine</label>
+        <select id="sp-med">
+          ${db.medicines.map(m => `<option value="${m.id}">${escapeHtml(m.name)} — default ${rs(m.sellingPrice)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Special Price (₹)</label>
+        <input id="sp-price" type="number" inputmode="decimal" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" data-act="cancel">Cancel</button>
+        <button class="btn btn-primary" data-act="save">Save</button>
+      </div>
+    `, {
+      onMount: (m) => {
+        m.querySelector('[data-act="cancel"]').onclick = closeModal;
+        m.querySelector('[data-act="save"]').onclick = () => {
+          const medId = m.querySelector('#sp-med').value;
+          const price = parseFloat(m.querySelector('#sp-price').value);
+          if (!medId || !price || price <= 0) { toast('Enter valid price'); return; }
+          // Replace existing for same med
+          db.customerPrices = db.customerPrices.filter(p => !(p.customerId === customerId && p.medicineId === medId));
+          db.customerPrices.push({ id: uid(), customerId, medicineId: medId, specialPrice: price });
+          saveDb();
+          closeModal();
+          renderers['add-customer'](customerId);
+        };
+      }
+    });
+  }
+
+  /* ===== NEW SALE ===== */
+  let cart = {
+    customer: null,
+    items: [],   // { medicineId, name, batchNo, hsnCode, unitType, qty, unitPrice, gstPercent }
+    discount: 0,
+    isInterState: false,
+    paymentMode: 'CASH',
+    paid: 0
+  };
+
+  function resetCart() {
+    cart = { customer: null, items: [], discount: 0, isInterState: false, paymentMode: 'CASH', paid: 0 };
+  }
+
+  function cartTotals() {
+    let sub = 0, gst = 0;
+    cart.items.forEach(it => {
+      const c = gstCalc(it.unitPrice, it.qty, it.gstPercent, cart.isInterState);
+      sub += c.taxable;
+      gst += c.gst;
+    });
+    sub = num2(sub); gst = num2(gst);
+    const total = num2(sub + gst - (cart.discount || 0));
+    const pending = num2(Math.max(0, total - (cart.paid || 0)));
+    return { sub, gst, total, pending };
+  }
+
+  renderers.sale = function () {
+    document.getElementById('topbar').style.display = '';
+    setTopBar({
+      title: 'New Sale',
+      left: { icon: '←', onclick: () => {
+        if (cart.items.length > 0) {
+          confirmDialog('Discard this sale?', () => { resetCart(); back(); }, 'Yes, discard');
+        } else { resetCart(); back(); }
+      }}
+    });
+    const t = cartTotals();
+    const el = document.getElementById('screen-sale');
+    el.innerHTML = `
+      <div class="card">
+        <div class="field">
+          <label>Customer</label>
+          <select id="sale-cust">
+            <option value="">Walk-in Customer</option>
+            ${db.customers.map(c => `<option value="${c.id}" ${cart.customer && cart.customer.id === c.id ? 'selected' : ''}>${escapeHtml(c.name)}</option>`).join('')}
+          </select>
+        </div>
+        <label class="row" style="font-size:13px">
+          <input type="checkbox" id="sale-interstate" ${cart.isInterState ? 'checked' : ''} />
+          <span>Inter-state sale (use IGST instead of CGST+SGST)</span>
+        </label>
+      </div>
+
+      <div class="card">
+        <div class="row" style="margin-bottom:8px">
+          <div class="grow semibold">Items</div>
+          <button class="btn btn-primary btn-sm" id="add-item-btn">＋ Add</button>
+        </div>
+        ${cart.items.length === 0 ? `
+          <div class="muted fs-14">No items yet. Tap Add to put medicines in this bill.</div>
+        ` : cart.items.map((it, idx) => {
+          const c = gstCalc(it.unitPrice, it.qty, it.gstPercent, cart.isInterState);
+          return `
+            <div class="cart-line">
+              <div class="grow">
+                <div class="name">${escapeHtml(it.name)}</div>
+                <div class="meta">
+                  <input type="number" inputmode="numeric" data-cart-qty="${idx}" value="${it.qty}" style="width:60px;padding:4px 6px;border-radius:8px;border:1px solid var(--outline)"/>
+                  × ₹<input type="number" inputmode="decimal" data-cart-price="${idx}" value="${it.unitPrice}" style="width:80px;padding:4px 6px;border-radius:8px;border:1px solid var(--outline)"/>
+                  • GST ${it.gstPercent}%
+                </div>
+                <div class="price">Line: ${rs(c.total)}</div>
+              </div>
+              <button class="icon-btn" data-cart-remove="${idx}" style="color:var(--danger)">✕</button>
+            </div>`;
+        }).join('')}
+      </div>
+
+      <div class="totals-card">
+        <div class="total-row"><span>Subtotal</span><span>${rs(t.sub)}</span></div>
+        ${cart.isInterState
+          ? `<div class="total-row"><span>IGST</span><span>${rs(t.gst)}</span></div>`
+          : `<div class="total-row"><span>CGST</span><span>${rs(t.gst / 2)}</span></div>
+             <div class="total-row"><span>SGST</span><span>${rs(t.gst / 2)}</span></div>`
+        }
+        <div class="total-row">
+          <span>Discount (₹)</span>
+          <input type="number" inputmode="decimal" id="sale-disc" value="${cart.discount}" style="width:90px;padding:4px 8px;border-radius:8px;border:1px solid var(--outline);text-align:right"/>
+        </div>
+        <div class="total-row bold"><span>Grand Total</span><span>${rs(t.total)}</span></div>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label>Payment Mode</label>
+          <select id="sale-mode">
+            ${PAYMENT_MODES.map(m => `<option value="${m}" ${m === cart.paymentMode ? 'selected' : ''}>${m}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Paid Amount</label>
+          <input id="sale-paid" type="number" inputmode="decimal" value="${cart.paid}" placeholder="0.00"/>
+        </div>
+        ${t.pending > 0 ? `<div class="text-danger semibold">Balance Due: ${rs(t.pending)}</div>` : ''}
+      </div>
+
+      <button class="btn btn-primary btn-block" id="save-sale-btn" ${cart.items.length === 0 ? 'disabled' : ''}>
+        Save & Generate Invoice
+      </button>
+    `;
+
+    // Bind events
+    el.querySelector('#sale-cust').onchange = (e) => {
+      const v = e.target.value;
+      cart.customer = v ? db.customers.find(c => c.id === v) : null;
+      // Re-apply prices for existing cart items (special prices may differ)
+      cart.items.forEach(it => {
+        const med = db.medicines.find(m => m.id === it.medicineId);
+        if (med) {
+          const sp = cart.customer
+            ? (db.customerPrices.find(p => p.customerId === cart.customer.id && p.medicineId === med.id) || {}).specialPrice
+            : null;
+          it.unitPrice = sp != null ? sp : med.sellingPrice;
+        }
+      });
+      renderers.sale();
+    };
+    el.querySelector('#sale-interstate').onchange = (e) => { cart.isInterState = e.target.checked; renderers.sale(); };
+    el.querySelector('#sale-disc').oninput = (e) => { cart.discount = parseFloat(e.target.value) || 0; const t2 = cartTotals(); /* live update only key bits */ };
+    el.querySelector('#sale-disc').onblur = () => renderers.sale();
+    el.querySelector('#sale-mode').onchange = (e) => { cart.paymentMode = e.target.value; };
+    el.querySelector('#sale-paid').oninput = (e) => { cart.paid = parseFloat(e.target.value) || 0; };
+    el.querySelector('#sale-paid').onblur = () => renderers.sale();
+
+    el.querySelectorAll('[data-cart-qty]').forEach(inp => {
+      inp.onchange = (e) => {
+        const i = parseInt(inp.dataset.cartQty);
+        const q = parseInt(e.target.value) || 0;
+        if (q <= 0) cart.items.splice(i, 1); else cart.items[i].qty = q;
+        renderers.sale();
+      };
+    });
+    el.querySelectorAll('[data-cart-price]').forEach(inp => {
+      inp.onchange = (e) => {
+        const i = parseInt(inp.dataset.cartPrice);
+        cart.items[i].unitPrice = parseFloat(e.target.value) || 0;
+        renderers.sale();
+      };
+    });
+    el.querySelectorAll('[data-cart-remove]').forEach(b => {
+      b.onclick = () => {
+        const i = parseInt(b.dataset.cartRemove);
+        cart.items.splice(i, 1); renderers.sale();
+      };
+    });
+
+    el.querySelector('#add-item-btn').onclick = openAddItemDialog;
+    el.querySelector('#save-sale-btn').onclick = saveSale;
+  };
+
+  function openAddItemDialog() {
+    if (db.medicines.length === 0) { toast('Add medicines first'); return; }
+    let search = '';
+    let selectedId = '';
+    let qty = '1';
+
+    function renderList() {
+      const filtered = db.medicines.filter(m =>
+        !search ||
+        m.name.toLowerCase().includes(search) ||
+        (m.batchNo || '').toLowerCase().includes(search)
+      );
+      return filtered.map(m => `
+        <div data-pick="${m.id}" style="
+            padding:10px;border-radius:10px;margin-bottom:4px;cursor:pointer;
+            background:${selectedId === m.id ? 'var(--primary-light)' : 'var(--bg)'};">
+          <div class="semibold">${escapeHtml(m.name)}</div>
+          <div class="muted fs-12">${m.unitType} • Stock ${m.quantity} • ${rs(m.sellingPrice)} • GST ${m.gstPercent}%</div>
+        </div>
+      `).join('') || '<div class="muted fs-14" style="padding:8px">No matches</div>';
+    }
+
+    const m = modal(`
+      <h2>Add Item</h2>
+      <div class="search-bar">
+        <span class="ic">🔍</span>
+        <input id="m-search" placeholder="Search medicine"/>
+      </div>
+      <div id="m-list" style="max-height:240px;overflow-y:auto;margin-bottom:8px">${renderList()}</div>
+      <div class="field">
+        <label>Quantity</label>
+        <input id="m-qty" type="number" inputmode="numeric" value="${qty}"/>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" data-act="cancel">Cancel</button>
+        <button class="btn btn-primary" data-act="add">Add</button>
+      </div>
+    `, {
+      onMount: (mEl) => {
+        const listEl = mEl.querySelector('#m-list');
+        mEl.querySelector('#m-search').oninput = (e) => { search = e.target.value.trim().toLowerCase(); listEl.innerHTML = renderList(); bindPicks(); };
+        function bindPicks() {
+          listEl.querySelectorAll('[data-pick]').forEach(d => {
+            d.onclick = () => { selectedId = d.dataset.pick; listEl.innerHTML = renderList(); bindPicks(); };
+          });
+        }
+        bindPicks();
+        mEl.querySelector('#m-qty').oninput = (e) => qty = e.target.value;
+        mEl.querySelector('[data-act="cancel"]').onclick = closeModal;
+        mEl.querySelector('[data-act="add"]').onclick = () => {
+          const med = db.medicines.find(x => x.id === selectedId);
+          const qNum = parseInt(qty);
+          if (!med) { toast('Pick a medicine'); return; }
+          if (!qNum || qNum <= 0) { toast('Enter valid quantity'); return; }
+          // determine price (special if customer set)
+          const sp = cart.customer
+            ? (db.customerPrices.find(p => p.customerId === cart.customer.id && p.medicineId === med.id) || {}).specialPrice
+            : null;
+          const unitPrice = sp != null ? sp : med.sellingPrice;
+          // Merge with existing cart line
+          const existing = cart.items.find(it => it.medicineId === med.id);
+          if (existing) existing.qty += qNum;
+          else cart.items.push({
+            medicineId: med.id,
+            name: med.name,
+            batchNo: med.batchNo,
+            hsnCode: med.hsnCode,
+            unitType: med.unitType,
+            qty: qNum,
+            unitPrice,
+            gstPercent: med.gstPercent
+          });
+          closeModal();
+          renderers.sale();
+        };
+      }
+    });
+  }
+
+  function saveSale() {
+    if (cart.items.length === 0) return;
+    const t = cartTotals();
+    const invoiceNo = nextInvoiceNo();
+    const sale = {
+      id: uid(),
+      invoiceNo,
+      customerId: cart.customer ? cart.customer.id : null,
+      customerName: cart.customer ? cart.customer.name : 'Walk-in Customer',
+      date: Date.now(),
+      subTotal: t.sub,
+      gstAmount: t.gst,
+      discount: cart.discount || 0,
+      total: t.total,
+      paidAmount: cart.paid || 0,
+      pendingAmount: t.pending,
+      paymentStatus: t.pending <= 0 ? 'PAID' : (cart.paid > 0 ? 'PARTIAL' : 'PENDING'),
+      paymentMode: cart.paymentMode,
+      isInterState: cart.isInterState
+    };
+    db.sales.push(sale);
+    cart.items.forEach(it => {
+      const c = gstCalc(it.unitPrice, it.qty, it.gstPercent, cart.isInterState);
+      db.saleItems.push({
+        id: uid(),
+        saleId: sale.id,
+        medicineId: it.medicineId,
+        medicineName: it.name,
+        batchNo: it.batchNo || '',
+        hsnCode: it.hsnCode || '',
+        unitType: it.unitType,
+        quantity: it.qty,
+        unitPrice: it.unitPrice,
+        gstPercent: it.gstPercent,
+        gstAmount: c.gst,
+        total: c.total
+      });
+      // reduce stock
+      const med = db.medicines.find(m => m.id === it.medicineId);
+      if (med) med.quantity = Math.max(0, med.quantity - it.qty);
+    });
+    if (sale.paidAmount > 0) {
+      db.payments.push({
+        id: uid(), saleId: sale.id,
+        amount: sale.paidAmount, date: sale.date,
+        mode: sale.paymentMode, note: 'Initial'
+      });
+    }
+    saveDb();
+    resetCart();
+    show('invoice', { arg: sale.id, replace: true });
+  }
+
+  /* ===== INVOICE ===== */
+  renderers.invoice = function (saleId) {
+    const sale = db.sales.find(s => s.id === saleId);
+    if (!sale) { toast('Invoice not found'); back(); return; }
+    const items = db.saleItems.filter(it => it.saleId === saleId);
+    const profile = db.profile;
+
+    setTopBar({
+      title: 'Invoice',
+      left: { icon: '←', onclick: () => { back(); } }
+    });
+
+    const half = sale.gstAmount / 2;
+
+    const headerHtml = `
+      <h2 class="center">${escapeHtml(profile.storeName || 'MedStock Pharmacy')}</h2>
+      <div class="center fs-12">${escapeHtml(profile.address || '')}</div>
+      <div class="center fs-12">
+        ${profile.phone ? 'Ph: ' + escapeHtml(profile.phone) : ''}
+        ${profile.email ? ' • ' + escapeHtml(profile.email) : ''}
+      </div>
+      <div class="center fs-12">
+        ${profile.gstNo ? 'GSTIN: ' + escapeHtml(profile.gstNo) : ''}
+        ${profile.drugLicenseNo ? ' • DL No: ' + escapeHtml(profile.drugLicenseNo) : ''}
+      </div>
+      <hr style="margin:8px 0"/>
+      <div class="center bold" style="margin-bottom:6px">TAX INVOICE</div>
+      <div class="row" style="font-size:12px">
+        <div class="grow"><b>Invoice:</b> ${escapeHtml(sale.invoiceNo)}</div>
+        <div class="text-right"><b>Date:</b> ${fmtDate(sale.date)}</div>
+      </div>
+      <div style="font-size:12px"><b>Customer:</b> ${escapeHtml(sale.customerName)}</div>
+      <div style="font-size:12px"><b>Payment:</b> ${escapeHtml(sale.paymentMode)}</div>
+    `;
+
+    const tableHtml = `
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Item</th><th>HSN</th>
+            <th class="right">Qty</th><th class="right">Rate</th>
+            <th class="right">GST%</th><th class="right">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${items.map((it, i) => `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${escapeHtml(it.medicineName)}${it.batchNo ? '<br/><span style="font-size:10px;color:#666">B:' + escapeHtml(it.batchNo) + '</span>' : ''}</td>
+              <td>${escapeHtml(it.hsnCode || '-')}</td>
+              <td class="right">${it.quantity}</td>
+              <td class="right">${rs(it.unitPrice)}</td>
+              <td class="right">${it.gstPercent}%</td>
+              <td class="right">${rs(it.total)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    const totalsHtml = `
+      <div class="totals">
+        <div class="row2"><span>Subtotal</span><span>${rs(sale.subTotal)}</span></div>
+        ${sale.isInterState
+          ? `<div class="row2"><span>IGST</span><span>${rs(sale.gstAmount)}</span></div>`
+          : `<div class="row2"><span>CGST</span><span>${rs(half)}</span></div>
+             <div class="row2"><span>SGST</span><span>${rs(sale.gstAmount - half)}</span></div>`
+        }
+        ${sale.discount > 0 ? `<div class="row2"><span>Discount</span><span>- ${rs(sale.discount)}</span></div>` : ''}
+        <div class="row2 bold"><span>Grand Total</span><span>${rs(sale.total)}</span></div>
+        <div class="row2"><span>Paid (${escapeHtml(sale.paymentMode)})</span><span>${rs(sale.paidAmount)}</span></div>
+        ${sale.pendingAmount > 0
+          ? `<div class="row2 bold" style="color:#c00"><span>Balance Due</span><span>${rs(sale.pendingAmount)}</span></div>`
+          : ''
+        }
+      </div>
+      <div class="center fs-12" style="margin-top:10px;color:#666">Thank you for your business!</div>
+    `;
+
+    const paperContent = `<div class="invoice-paper">${headerHtml}${tableHtml}${totalsHtml}</div>`;
+
+    const el = document.getElementById('screen-invoice');
+    el.innerHTML = `
+      <div class="card" style="background:var(--success-soft);color:var(--success);font-weight:600">
+        ✓ Sale Saved — ${escapeHtml(sale.invoiceNo)}
+      </div>
+      ${paperContent}
+      <div class="row gap-8 mt-12">
+        <button class="btn btn-outline" id="inv-done" style="flex:1">Done</button>
+        <button class="btn btn-primary" id="inv-print" style="flex:2">📤 Save / Share PDF</button>
+      </div>
+    `;
+
+    el.querySelector('#inv-done').onclick = () => show('home', { replace: true });
+    el.querySelector('#inv-print').onclick = () => {
+      // Render only invoice into print-area, then print
+      const pa = document.getElementById('print-area');
+      pa.style.display = 'block';
+      pa.innerHTML = paperContent;
+      // Use Android bridge if available, otherwise window.print()
+      try {
+        if (window.Android && typeof Android.printInvoice === 'function') {
+          Android.printInvoice(sale.invoiceNo);
+        } else {
+          window.print();
+        }
+      } catch (e) {
+        window.print();
+      }
+      // Hide after a moment
+      setTimeout(() => { pa.style.display = 'none'; pa.innerHTML = ''; }, 500);
+    };
+  };
+
+  /* ===== MORE ===== */
+  renderers.more = function () {
+    setTopBar({ title: 'More' });
+    const items = [
+      { go: 'customers', icon: '👥', title: 'Customers', sub: 'Manage customers and special prices' },
+      { go: 'pending', icon: '🧾', title: 'Pending Payments', sub: 'Track outstanding dues' },
+      { go: 'expiry', icon: '⏰', title: 'Expiry Alerts', sub: 'Stock expiring soon' },
+      { go: 'profile', icon: '🏪', title: 'My Profile / Store', sub: 'Store name, GSTIN, license' }
+    ];
+    document.getElementById('screen-more').innerHTML = items.map(it => `
+      <div class="list-item clickable" data-go="${it.go}">
+        <div class="avatar primary">${it.icon}</div>
+        <div class="grow">
+          <div class="title">${it.title}</div>
+          <div class="sub">${it.sub}</div>
+        </div>
+        <div class="muted">›</div>
+      </div>
+    `).join('');
+  };
+
+  /* ===== PENDING ===== */
+  renderers.pending = function () {
+    setTopBar({ title: 'Pending Payments', left: { icon: '←', onclick: () => back() } });
+    const list = db.sales.filter(s => s.pendingAmount > 0).sort((a, b) => b.date - a.date);
+    const total = list.reduce((a, s) => a + s.pendingAmount, 0);
+    const el = document.getElementById('screen-pending');
+    el.innerHTML = `
+      <div class="card" style="background:var(--danger-soft)">
+        <div class="muted fs-12">Total Outstanding</div>
+        <div style="font-size:24px;font-weight:700;color:var(--danger)">${rs(total)}</div>
+      </div>
+      ${list.length === 0 ? `
+        <div class="empty"><div class="ic">✅</div><h3>No pending dues</h3><p>All bills are settled</p></div>
+      ` : list.map(s => `
+        <div class="list-item clickable" data-pay-sale="${s.id}">
+          <div class="grow">
+            <div class="title">${escapeHtml(s.customerName)}</div>
+            <div class="sub">${escapeHtml(s.invoiceNo)} • ${fmtDate(s.date)}</div>
+            <div class="sub">Total ${rs(s.total)} • Paid ${rs(s.paidAmount)}</div>
+          </div>
+          <div class="text-right">
+            <div class="fs-12 text-danger">Due</div>
+            <div class="bold text-danger fs-16">${rs(s.pendingAmount)}</div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+    el.querySelectorAll('[data-pay-sale]').forEach(d => {
+      d.onclick = () => openPaymentDialog(d.dataset.paySale);
+    });
+  };
+
+  function openPaymentDialog(saleId) {
+    const sale = db.sales.find(s => s.id === saleId);
+    if (!sale) return;
+    let amount = sale.pendingAmount;
+    let mode = 'CASH', note = '';
+    modal(`
+      <h2>Record Payment</h2>
+      <p class="muted fs-14">${escapeHtml(sale.customerName)} • ${escapeHtml(sale.invoiceNo)}</p>
+      <p class="text-danger semibold">Pending: ${rs(sale.pendingAmount)}</p>
+      <div class="field"><label>Amount</label><input id="pd-amt" type="number" inputmode="decimal" value="${amount}"/></div>
+      <div class="field">
+        <label>Mode</label>
+        <select id="pd-mode">${PAYMENT_MODES.map(m => `<option>${m}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label>Note (optional)</label><input id="pd-note"/></div>
+      <div class="modal-actions">
+        <button class="btn btn-outline" data-act="cancel">Cancel</button>
+        <button class="btn btn-primary" data-act="ok">Record</button>
+      </div>
+    `, {
+      onMount: (m) => {
+        m.querySelector('[data-act="cancel"]').onclick = closeModal;
+        m.querySelector('[data-act="ok"]').onclick = () => {
+          const a = parseFloat(m.querySelector('#pd-amt').value);
+          if (!a || a <= 0) { toast('Enter amount'); return; }
+          mode = m.querySelector('#pd-mode').value;
+          note = m.querySelector('#pd-note').value.trim();
+          db.payments.push({ id: uid(), saleId: sale.id, amount: a, date: Date.now(), mode, note });
+          sale.paidAmount = num2(sale.paidAmount + a);
+          sale.pendingAmount = num2(Math.max(0, sale.total - sale.paidAmount));
+          sale.paymentStatus = sale.pendingAmount <= 0 ? 'PAID' : 'PARTIAL';
+          saveDb();
+          closeModal();
+          toast('Payment recorded');
+          renderers.pending();
+        };
+      }
+    });
+  }
+
+  /* ===== EXPIRY ===== */
+  renderers.expiry = function () {
+    setTopBar({ title: 'Expiry Alerts', left: { icon: '←', onclick: () => back() } });
+    const cutoff = daysFromNow(180);
+    const list = db.medicines
+      .filter(m => m.expiryDate > 0 && m.expiryDate <= cutoff)
+      .sort((a, b) => a.expiryDate - b.expiryDate);
+    const el = document.getElementById('screen-expiry');
+    if (list.length === 0) {
+      el.innerHTML = `<div class="empty"><div class="ic">✅</div><h3>All clear</h3><p>No medicines expiring within 6 months.</p></div>`;
+      return;
+    }
+    el.innerHTML = list.map(m => {
+      const days = daysBetween(Date.now(), m.expiryDate);
+      let cls = 'success', label = days + 'D LEFT', avatar = 'success';
+      if (days < 0) { cls = 'danger'; label = 'EXPIRED'; avatar = 'danger'; }
+      else if (days <= 30) { cls = 'danger'; label = days + 'D LEFT'; avatar = 'danger'; }
+      else if (days <= 90) { cls = 'warning'; label = days + 'D LEFT'; avatar = 'warning'; }
+      return `
+        <div class="list-item">
+          <div class="avatar ${avatar}">⏰</div>
+          <div class="grow">
+            <div class="title">${escapeHtml(m.name)}</div>
+            <div class="sub">Batch ${escapeHtml(m.batchNo || '-')} • Qty ${m.quantity} • Exp ${fmtDate(m.expiryDate)}</div>
+          </div>
+          <span class="chip chip-${cls}">${label}</span>
+        </div>`;
+    }).join('');
+  };
+
+  /* ===== PROFILE ===== */
+  renderers.profile = function () {
+    setTopBar({ title: 'My Profile / Store', left: { icon: '←', onclick: () => back() } });
+    const p = db.profile;
+    const el = document.getElementById('screen-profile');
+    el.innerHTML = `
+      <div class="card">
+        <div class="muted fs-12 mb-8">These details appear on every invoice.</div>
+        <div class="field"><label>Owner / Pharmacist Name</label><input id="p-owner" value="${escapeHtml(p.ownerName)}"/></div>
+        <div class="field"><label>Store Name</label><input id="p-store" value="${escapeHtml(p.storeName)}"/></div>
+        <div class="field"><label>Address</label><textarea id="p-addr">${escapeHtml(p.address)}</textarea></div>
+        <div class="field-row">
+          <div class="field"><label>State</label><input id="p-state" value="${escapeHtml(p.state)}"/></div>
+          <div class="field"><label>Code</label><input id="p-code" value="${escapeHtml(p.stateCode)}"/></div>
+        </div>
+        <div class="field"><label>Phone</label><input id="p-phone" type="tel" inputmode="numeric" value="${escapeHtml(p.phone)}"/></div>
+        <div class="field"><label>Email</label><input id="p-email" type="email" value="${escapeHtml(p.email)}"/></div>
+        <div class="field"><label>GSTIN</label><input id="p-gst" value="${escapeHtml(p.gstNo)}"/></div>
+        <div class="field"><label>Drug License No.</label><input id="p-dl" value="${escapeHtml(p.drugLicenseNo)}"/></div>
+        <div class="field"><label>Invoice Prefix</label><input id="p-pre" value="${escapeHtml(p.invoicePrefix || 'INV')}"/></div>
+      </div>
+      <button class="btn btn-primary btn-block" id="p-save">Save Profile</button>
+
+      <div class="section-title">Backup / Restore</div>
+      <div class="card">
+        <div class="row gap-8">
+          <button class="btn btn-outline" id="p-export" style="flex:1">⬇ Export Data</button>
+          <button class="btn btn-outline" id="p-import" style="flex:1">⬆ Import Data</button>
+        </div>
+        <div class="muted fs-12 mt-8">
+          Export saves all your data as a JSON file you can email to yourself.
+          Import restores it on a new device.
+        </div>
+        <button class="btn btn-outline" id="p-clear" style="margin-top:8px;color:var(--danger)">Reset All Data</button>
+      </div>
+    `;
+
+    el.querySelector('#p-save').onclick = () => {
+      db.profile.ownerName = el.querySelector('#p-owner').value.trim();
+      db.profile.storeName = el.querySelector('#p-store').value.trim();
+      db.profile.address = el.querySelector('#p-addr').value.trim();
+      db.profile.state = el.querySelector('#p-state').value.trim();
+      db.profile.stateCode = el.querySelector('#p-code').value.trim();
+      db.profile.phone = el.querySelector('#p-phone').value.trim();
+      db.profile.email = el.querySelector('#p-email').value.trim();
+      db.profile.gstNo = el.querySelector('#p-gst').value.trim().toUpperCase();
+      db.profile.drugLicenseNo = el.querySelector('#p-dl').value.trim().toUpperCase();
+      db.profile.invoicePrefix = (el.querySelector('#p-pre').value.trim() || 'INV').toUpperCase();
+      saveDb();
+      toast('Profile saved');
+      back();
+    };
+    el.querySelector('#p-export').onclick = exportData;
+    el.querySelector('#p-import').onclick = importData;
+    el.querySelector('#p-clear').onclick = () => {
+      confirmDialog('This will delete ALL stock, customers, sales and the profile. This cannot be undone.', () => {
+        db = defaultDb(); saveDb(); toast('All data cleared'); show('home', { replace: true });
+      }, 'Yes, reset all');
+    };
+  };
+
+  function exportData() {
+    const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'medstock-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    toast('Backup downloaded');
+  }
+
+  function importData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
+    input.onchange = (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try {
+          const parsed = JSON.parse(r.result);
+          if (!parsed.medicines || !parsed.profile) throw new Error('Invalid backup');
+          db = Object.assign(defaultDb(), parsed);
+          saveDb();
+          toast('Data imported');
+          show('home', { replace: true });
+        } catch (err) { toast('Import failed: ' + err.message); }
+      };
+      r.readAsText(f);
+    };
+    input.click();
+  }
+
+  /* ---------- 8. Event delegation ---------- */
+  document.addEventListener('click', (e) => {
+    const goEl = e.target.closest('[data-go]');
+    if (goEl) {
+      const target = goEl.dataset.go;
+      const arg = goEl.dataset.arg || null;
+      if (target === 'sale') resetCart();
+      show(target, { arg });
+      e.preventDefault();
+    }
+  });
+
+  // Bottom nav
+  document.getElementById('bottomnav').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-tab]');
+    if (!b) return;
+    const tab = b.dataset.tab;
+    if (tab === 'sale') { resetCart(); show('sale', { replace: false }); }
+    else show(tab, { replace: false });
+  });
+
+  /* ---------- 9. Init ---------- */
+  function init() {
+    loadDb();
+    show('home', { replace: true });
+  }
+
+  /* Public API for back button (called from Android) */
+  function handleBack() {
+    // If a modal is open, close it
+    if (document.querySelector('.modal-overlay')) { closeModal(); return true; }
+    if (screenStack.length > 1) { back(); return true; }
+    return false;
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  return { handleBack };
+})();
+</script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="Theme.MedStock" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor" tools:targetApi="l">@color/primary_dark</item>
+    <style name="Theme.MedStock" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor" tools:targetApi="l">#00695C</item>
+        <item name="android:windowBackground">@color/primary</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 </resources>
