@@ -93,7 +93,7 @@ class MainActivity : ComponentActivity() {
         fun printInvoice(invoiceNo: String) {
             activity.runOnUiThread {
                 val pm = activity.getSystemService(Context.PRINT_SERVICE) as PrintManager
-                val jobName = "MedStock-Invoice-$invoiceNo"
+                val jobName = "Medi-Invoice-$invoiceNo"
                 val adapter = webView.createPrintDocumentAdapter(jobName)
                 pm.print(jobName, adapter, PrintAttributes.Builder().build())
             }

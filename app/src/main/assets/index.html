@@ -4,10 +4,10 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
 <meta name="theme-color" content="#00695C" />
-<title>MedStock</title>
+<title>Medi</title>
 <style>
 /* =========================================================
-   MedStock - all CSS in this <style> block.
+   Medi - all CSS in this <style> block.
    To recolor the brand, change --primary / --primary-dark.
    ========================================================= */
 :root {
@@ -434,7 +434,7 @@ button { cursor: pointer; border: none; background: transparent; padding: 0; }
 
 <div id="app">
   <!-- Top bar (rendered per screen) -->
-  <header id="topbar" class="topbar"><h1>MedStock</h1></header>
+  <header id="topbar" class="topbar"><h1>Medi</h1></header>
 
   <!-- Print area for invoice (hidden visually until print) -->
   <div id="print-area" style="display:none"></div>
@@ -478,7 +478,7 @@ button { cursor: pointer; border: none; background: transparent; padding: 0; }
 
 <script>
 /* =========================================================
-   MedStock - All app logic.
+   Medi - All app logic.
    Architecture:
    1. Constants
    2. Storage (localStorage-backed db)
@@ -498,7 +498,7 @@ const MedStock = (() => {
   const GST_RATES = [0, 5, 12, 18, 28];
   const UNITS = ['BOX', 'PIECES', 'BOTTLE', 'STRIP'];
   const PAYMENT_MODES = ['CASH', 'UPI', 'CARD', 'CREDIT'];
-  const STORAGE_KEY = 'medstock_db_v1';
+  const STORAGE_KEY = 'medi_db_v1';
 
   /* ---------- 2. Storage ---------- */
   const defaultDb = () => ({
@@ -731,7 +731,7 @@ const MedStock = (() => {
     const recentSales = db.sales.slice().sort((a, b) => b.date - a.date).slice(0, 5);
 
     const ownerName = db.profile.ownerName || 'there';
-    const storeName = db.profile.storeName || 'MedStock Pharmacy';
+    const storeName = db.profile.storeName || 'Medi';
 
     const el = document.getElementById('screen-home');
     el.innerHTML = `
@@ -1468,7 +1468,7 @@ const MedStock = (() => {
     const half = sale.gstAmount / 2;
 
     const headerHtml = `
-      <h2 class="center">${escapeHtml(profile.storeName || 'MedStock Pharmacy')}</h2>
+      <h2 class="center">${escapeHtml(profile.storeName || 'Medi')}</h2>
       <div class="center fs-12">${escapeHtml(profile.address || '')}</div>
       <div class="center fs-12">
         ${profile.phone ? 'Ph: ' + escapeHtml(profile.phone) : ''}
@@ -1756,7 +1756,7 @@ const MedStock = (() => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'medstock-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.download = 'medi-backup-' + new Date().toISOString().slice(0, 10) + '.json';
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
     toast('Backup downloaded');
